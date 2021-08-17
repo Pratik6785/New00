@@ -6,6 +6,7 @@
 using namespace std;
 #define MIN_BALANCE 500
 class InsufficientFunds{};
+//writing class for account functions
 class Account
 {
 private:
@@ -31,6 +32,7 @@ public:
  friend ostream & operator<<(ostream &os,Account &acc);
 };
 long Account::NextAccountNumber=0;
+//writing class for bank functions
 class Bank
 {
 private:
@@ -68,6 +70,7 @@ int main()
  cout<<"\n\t7 Quit";
  cout<<"\nEnter your choice: ";
  cin>>choice;
+  //getting choice from the user
  switch(choice)
  {
  case 1:
@@ -124,6 +127,7 @@ exit(0);
 
  return 0;
 }
+//parameterised constructor for Account
 Account::Account(string fname,string lname,float balance)
 {
  NextAccountNumber++;
@@ -132,24 +136,29 @@ Account::Account(string fname,string lname,float balance)
  lastName=lname;
  this->balance=balance;
 }
+//function for deposit
 void Account::Deposit(float amount)
 {
  balance+=amount;
 }
+//function for withdrawal
 void Account::Withdraw(float amount)
 {
  if(balance-amount<MIN_BALANCE)
  throw InsufficientFunds();
  balance-=amount;
 }
+//function for setting account number
 void Account::setLastAccountNumber(long accountNumber)
 {
  NextAccountNumber=accountNumber;
 }
+//getter functon for account number
 long Account::getLastAccountNumber()
 {
  return NextAccountNumber;
 }
+//function for writing into bank data file (by overloading insertion insertion operator)
 ofstream & operator<<(ofstream &ofs,Account &acc)
 {
  ofs<<acc.accountNumber<<endl;
@@ -158,6 +167,7 @@ ofstream & operator<<(ofstream &ofs,Account &acc)
  ofs<<acc.balance<<endl;
  return ofs;
 }
+//function for reading from bank data file (by overloading extraction operator)
 ifstream & operator>>(ifstream &ifs,Account &acc)
 {
  ifs>>acc.accountNumber;
@@ -167,6 +177,7 @@ ifstream & operator>>(ifstream &ifs,Account &acc)
  return ifs;
 
 }
+//function to display account details
 ostream & operator<<(ostream &os,Account &acc)
 {
  os<<"First Name:"<<acc.getFirstName()<<endl;
@@ -183,9 +194,10 @@ Bank::Bank()
  infile.open("Bank.data");
  if(!infile)
  {
- //cout<<"Error in Opening! File Not Found!!"<<endl;
+ cout<<"Error in Opening! File Not Found!!"<<endl;
  return;
  }
+//reading from Bank.data
  while(!infile.eof())
  {
  infile>>account;
@@ -196,6 +208,7 @@ Bank::Bank()
  infile.close();
 
 }
+//writing into Bank.data
 Account Bank::OpenAccount(string fname,string lname,float balance)
 {
  ofstream outfile;
@@ -212,29 +225,34 @@ Account Bank::OpenAccount(string fname,string lname,float balance)
  outfile.close();
  return account;
 }
+//function for balance enquiry
 Account Bank::BalanceEnquiry(long accountNumber)
 {
  map<long,Account>::iterator itr=accounts.find(accountNumber);
  return itr->second;
 }
+//function to deposit amount
 Account Bank::Deposit(long accountNumber,float amount)
 {
  map<long,Account>::iterator itr=accounts.find(accountNumber);
  itr->second.Deposit(amount);
  return itr->second;
 }
+//function to withdraw amount
 Account Bank::Withdraw(long accountNumber,float amount)
 {
  map<long,Account>::iterator itr=accounts.find(accountNumber);
  itr->second.Withdraw(amount);
  return itr->second;
 }
+//function to close account
 void Bank::CloseAccount(long accountNumber)
 {
  map<long,Account>::iterator itr=accounts.find(accountNumber);
  cout<<"Account Deleted"<<itr->second;
  accounts.erase(accountNumber);
 }
+//function to display all accounts
 void Bank::ShowAllAccounts()
 {
  map<long,Account>::iterator itr;
@@ -243,6 +261,7 @@ void Bank::ShowAllAccounts()
  cout<<"Account "<<itr->first<<endl<<itr->second<<endl;
  }
 }
+//destructor for bank
 Bank::~Bank()
 {
  ofstream outfile;
